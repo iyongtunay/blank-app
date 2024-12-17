@@ -44,26 +44,33 @@ def read_text_file(file_path):
 
 
 def find_synonyms(text1, text2):
-    """Find synonyms between two texts."""
-    words1 = set(text1.lower().split())
-    words2 = set(text2.lower().split())
+    """Find synonym matches between two texts using WordNet."""
+    words1 = set(text1.split())
+    words2 = set(text2.split())
     synonym_matches = []
 
     for word1 in words1:
+        synsets1 = wn.synsets(word1)
+        if not synsets1:
+            continue  
+
         for word2 in words2:
-            if word1 == word2:
-                continue
-            # Check if word1 and word2 are synonyms
-            synsets1 = wn.synsets(word1)
+            if word1.lower() == word2.lower():
+                continue  
+
             synsets2 = wn.synsets(word2)
+            if not synsets2:
+                continue  
+
             for syn1 in synsets1:
                 for syn2 in synsets2:
-                    if syn1 == syn2:
-                        # Avoid duplicates by using a set
-                        if (word1, word2) not in synonym_matches:
-                            synonym_matches.append((word1, word2))
-    return synonym_matches
+                    if set(lemma.name().lower() for lemma in syn1.lemmas()) & set(
+                        lemma.name().lower() for lemma in syn2.lemmas()
+                    ):
+                        synonym_matches.append((word1, word2))
+                        break  
 
+    return synonym_matches
 
 def get_readability_score(text):
     """Calculate the Flesch-Kincaid readability score."""

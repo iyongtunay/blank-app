@@ -53,9 +53,8 @@ def find_synonyms(text1, text2):
     for word1 in words1:
         synsets1 = wn.synsets(word1)
         if not synsets1:
-            print(f"No synsets for {word1}")  # Debugging
+            print(f"No synsets for {word1}") 
             continue
-
 
         for word2 in words2:
             if word1 == word2:
@@ -65,7 +64,7 @@ def find_synonyms(text1, text2):
                 for lemma in syn1.lemmas():
                     if lemma.name().lower() == word2:
                         synonym_matches.append((word1, word2))
-                        break  # Avoid duplicate entries
+                        break  
     return synonym_matches
 
 def get_readability_score(text):
