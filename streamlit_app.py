@@ -7,6 +7,9 @@ import nltk
 from nltk.corpus import wordnet as wn
 from textstat import textstat
 
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+
 st.set_page_config(page_title="integrity scanner", page_icon=":cherry_blossom:", layout="wide")
 
 def calculate_similarity(text1, text2):
