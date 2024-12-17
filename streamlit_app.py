@@ -6,9 +6,11 @@ import chardet
 import nltk
 from nltk.corpus import wordnet as wn
 from textstat import textstat
+from nltk.corpus import stopwords
 
 nltk.download('wordnet')
 nltk.download('omw-1.4')
+nltk.download('stopwords')
 
 st.set_page_config(page_title="integrity scanner", page_icon=":cherry_blossom:", layout="wide")
 
@@ -44,10 +46,13 @@ def read_text_file(file_path):
 
 
 def find_synonyms(text1, text2):
-    """Find synonym matches between two texts using WordNet."""
-    words1 = set(text1.split())
-    words2 = set(text2.split())
-    synonym_matches = []
+    """Find synonym matches between two texts using WordNet, excluding stopwords."""
+    stop_words = set(stopwords.words('english'))
+
+    words1 = set(word for word in text1.split() if word.lower() not in stop_words)
+    words2 = set(word for word in text2.split() if word.lower() not in stop_words)
+
+    synonym_matches = set()
 
     for word1 in words1:
         synsets1 = wn.synsets(word1)
@@ -67,10 +72,10 @@ def find_synonyms(text1, text2):
                     if set(lemma.name().lower() for lemma in syn1.lemmas()) & set(
                         lemma.name().lower() for lemma in syn2.lemmas()
                     ):
-                        synonym_matches.append((word1, word2))
+                        synonym_matches.add((word1, word2))  # Adding to set to ensure uniqueness
                         break  
 
-    return synonym_matches
+    return list(synonym_matches)
 
 def get_readability_score(text):
     """Calculate the Flesch-Kincaid readability score."""
