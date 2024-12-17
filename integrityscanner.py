@@ -7,6 +7,9 @@ import nltk
 from nltk.corpus import wordnet as wn
 from textstat import textstat
 
+nltk.download('wordnet')
+nltk.download('omw-1.4')
+
 st.set_page_config(page_title="integrity scanner", page_icon=":cherry_blossom:", layout="wide")
 
 def calculate_similarity(text1, text2):
@@ -41,7 +44,7 @@ def read_text_file(file_path):
 
 
 def find_synonyms(text1, text2):
-    """Find synonyms between two texts."""
+    """Find synonym matches between two texts."""
     words1 = set(text1.lower().split())
     words2 = set(text2.lower().split())
     synonym_matches = []
@@ -50,15 +53,14 @@ def find_synonyms(text1, text2):
         for word2 in words2:
             if word1 == word2:
                 continue
-            # Check if word1 and word2 are synonyms
             synsets1 = wn.synsets(word1)
             synsets2 = wn.synsets(word2)
+            
             for syn1 in synsets1:
-                for syn2 in synsets2:
-                    if syn1 == syn2:
-                        # Avoid duplicates by using a set
-                        if (word1, word2) not in synonym_matches:
-                            synonym_matches.append((word1, word2))
+                for lemma in syn1.lemmas():
+                    if lemma.name().lower() == word2:
+                        synonym_matches.append((word1, word2))
+                        break  
     return synonym_matches
 
 
